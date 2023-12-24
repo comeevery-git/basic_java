@@ -84,11 +84,11 @@ public class StringTest {
         int index = 3;
         assertThatThrownBy(() -> data.charAt(index))
             .isInstanceOf(StringIndexOutOfBoundsException.class)
-            .hasMessage("위치값이 벗어났습니다. (%d)", index);
+            .hasMessage("Index %d out of bounds for length %d", index, index);
 
         assertThatExceptionOfType(StringIndexOutOfBoundsException.class)
             .isThrownBy(() -> data.charAt(index))
-            .withMessage("위치값이 벗어났습니다. (%d)", index);
+            .withMessage("Index %d out of bounds for length %d", index, index);
 
     }
 
