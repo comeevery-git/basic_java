@@ -1,27 +1,45 @@
 plugins {
-    id 'java'
+    id("java")
+    id("org.springframework.boot") version "3.2.0"
+    id("io.spring.dependency-management") version "1.1.4"
+
 }
+
+group 'org.example'
+version '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-    sourceCompatibility = '21'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.slf4j:slf4j-api:2.0.3'
+    implementation 'org.springframework.boot:spring-boot-starter:3.2.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
+// implementation 'mysql:mysql-connector-java'
+
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
+    // LOG
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+    implementation 'org.slf4j:slf4j-api:2.0.3'
 
+    // TEST
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.assertj:assertj-core:3.11.1'

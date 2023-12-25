@@ -3,7 +3,13 @@
 > Java 의 다양한 기능을 활용해보며 이것저것 개발 및 테스트 해보는 프로젝트입니다. 
 
 - Java 21
-- Gradle 8.4
+- Gradle 8.5
+  - `./gradlew wrapper --gradle-version=8.5`
+- Spring Boot 3.2.0
+- JUnit 5
+- h2
+  - `jdbc:h2:mem:testdb`
+- JPA
 
 
 ----
