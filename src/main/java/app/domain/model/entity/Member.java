@@ -6,15 +6,9 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="member"
-        , uniqueConstraints = {
-        @UniqueConstraint(
-                name = "NAME_EMAIL_UNIQUE"
-                , columnNames = {
-                "name", "email"
-        }
-        )
-}
+@Table(name="member", uniqueConstraints = {
+        @UniqueConstraint(name = "NAME_EMAIL_UNIQUE", columnNames = {"name", "email"})
+    }
 )
 public class Member {
     @Id
@@ -28,6 +22,7 @@ public class Member {
     private String email;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
 
     @Temporal(TemporalType.TIMESTAMP)
