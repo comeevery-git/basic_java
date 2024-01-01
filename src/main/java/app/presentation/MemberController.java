@@ -5,9 +5,7 @@ import app.application.vo.member.CreateMemberVo;
 import app.domain.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -16,12 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     private final MemberService memberService;
 
+    /**
+     * 회원 등록
+     * @param createMemberDto
+     * @return
+     */
     @PostMapping
-    public CreateMemberVo createMember(CreateMemberDto createMemberDto) {
+    public CreateMemberVo createMember(@RequestBody CreateMemberDto createMemberDto) {
         log.info("createMemberDto: {}", createMemberDto);
 
-        memberService.createMember(createMemberDto);
-        return null;
+        return memberService.createMember(createMemberDto);
     }
 
 
