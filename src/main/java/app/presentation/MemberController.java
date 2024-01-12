@@ -23,18 +23,6 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberService memberService;
 
-    /**
-     * 회원 등록
-     * @param createMemberDto
-     * @return
-     */
-    @PostMapping
-    public CreateMemberVo createMember(@RequestBody CreateMemberDto createMemberDto) {
-        log.info("createMemberDto: {}", createMemberDto);
-
-        return memberService.createMember(createMemberDto);
-    }
-
     @GetMapping("/{memberId}")
     @Operation(summary = "회원 정보 조회", description = "회원 정보를 조회합니다.")
     @ApiResponses(value = {
@@ -45,7 +33,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Server error")
     })
-    public MemberVo getMember(@Parameter(name = "memberId", example = "M2312310001") @RequestParam final String memberId) {
+    public MemberVo getMember(@Parameter(name = "memberId", example = "2312310001") @PathVariable final Long memberId) {
         return MemberVo.builder().memberId(memberId).build();
     }
 
@@ -59,8 +47,10 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Server error")
     })
-    public CreateMemberVo createMember(@Parameter(name = "robot_serial_", example = "B20000-000") @RequestBody final String robot_serial_) {
-        return CreateMemberVo.builder().build();
+    public CreateMemberVo createMember(@RequestBody final CreateMemberDto createMemberDto) {
+        log.info("createMemberDto: {}", createMemberDto);
+
+        return memberService.createMember(createMemberDto);
     }
 
 
