@@ -3,11 +3,18 @@ package app.application.dto.member;
 import app.domain.model.enums.Role;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.persistence.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.time.LocalDateTime;
-
+@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CreateMemberDto {
     @NotBlank
@@ -20,10 +27,4 @@ public class CreateMemberDto {
     @NotBlank
     private Role role;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @NotBlank
-    private LocalDateTime createdDate;
-
-    @NotBlank
-    private String createdMemberId;
 }

@@ -1,6 +1,8 @@
 package app.domain.model.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,15 +26,17 @@ public class Wallet {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date", nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdDate;
 
     @Column(name = "created_member_id", nullable = false)
-    private String createdMemberId;
+    private Long createdMemberId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_date")
+    @UpdateTimestamp
     private LocalDateTime updatedDate;
 
     @Column(name = "updated_member_id")
-    private String updatedMemberId;
+    private Long updatedMemberId;
 }

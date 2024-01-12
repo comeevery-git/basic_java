@@ -1,5 +1,6 @@
 package app.application.vo.member;
 
+import app.domain.model.entity.Member;
 import app.domain.model.enums.Role;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,14 +8,21 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 @Schema(description = "회원 정보")
-@Builder
-@Getter
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class CreateMemberVo {
+    private Long memberId;
 
     @Schema(description = "회원 고유 아이디", example = "M2312310001")
     private String memberId;
@@ -35,4 +43,13 @@ public class CreateMemberVo {
 
     @Schema(description = "최초 생성 회원 아이디", example = "2021-07-01T00:00:00")
     private String createdMemberId;
+
+    public static CreateMemberVo toVo(Member member) {
+        return CreateMemberVo.builder()
+                .memberId(member.getMemberId())
+                .name(member.getName())
+                .email(member.getEmail())
+                .role(member.getRole())
+                .build();
+    }
 }

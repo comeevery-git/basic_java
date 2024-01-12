@@ -23,12 +23,16 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberService memberService;
 
+    /**
+     * 회원 등록
+     * @param createMemberDto
+     * @return
+     */
     @PostMapping
-    public CreateMemberVo createMember(CreateMemberDto createMemberDto) {
+    public CreateMemberVo createMember(@RequestBody CreateMemberDto createMemberDto) {
         log.info("createMemberDto: {}", createMemberDto);
 
-        memberService.createMember(createMemberDto);
-        return null;
+        return memberService.createMember(createMemberDto);
     }
 
     @GetMapping("/{memberId}")
