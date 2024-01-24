@@ -1,7 +1,7 @@
 package app.presentation;
 
 import app.application.dto.member.CreateMemberDto;
-import app.domain.model.enums.Role;
+import app.domain.model.entity.member.Role;
 import app.domain.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +43,16 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
                 )
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원 조회 테스트")
+    public void 회원_조회() throws Exception {
+        Long memberId = 1L;
+
+        mockMvc.perform(get("/api/v1/members/" + memberId))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
