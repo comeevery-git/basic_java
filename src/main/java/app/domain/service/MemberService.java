@@ -8,6 +8,7 @@ import app.domain.model.entity.member.Member;
 import app.domain.repository.MemberRepository;
 import app.infrastructure.exception.CustomException;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
@@ -24,6 +25,8 @@ public class MemberService {
                             .build();
             Member result = memberRepository.save(member);
             return CreateMemberVo.toVo(result);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ResponseCode.CONFLICT_DATA);
         } catch (CustomException e) {
             throw new CustomException(e.getResponseCode());
         } catch (Exception e) {
@@ -33,7 +36,7 @@ public class MemberService {
 
     public MemberVo getMember(Long memberId) {
         try {
-            Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ResponseCode.RESULT_NOT_EXIST));
+            Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ResponseCode.NOT_EXIST));
             return MemberVo.toVo(member);
         } catch (CustomException e) {
             throw new CustomException(e.getResponseCode());
