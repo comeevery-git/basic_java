@@ -1,6 +1,8 @@
 package app.presentation;
 
 import app.application.dto.member.CreateMemberDto;
+import app.domain.model.common.CommonCode;
+import app.domain.model.common.ResponseCode;
 import app.domain.model.entity.member.Role;
 import app.domain.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,9 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -44,6 +47,8 @@ class MemberControllerTest {
                         .content(objectMapper.writeValueAsString(dto))
                 )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(CommonCode.STATUS_SUCCESS))
+                .andExpect(jsonPath("$.code").value(ResponseCode.SUCCESS.getCode()))
                 .andDo(print());
     }
 
@@ -54,6 +59,8 @@ class MemberControllerTest {
 
         mockMvc.perform(get("/api/v1/members/" + memberId))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(CommonCode.STATUS_SUCCESS))
+                .andExpect(jsonPath("$.code").value(ResponseCode.SUCCESS.getCode()))
                 .andDo(print());
     }
 

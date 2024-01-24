@@ -7,8 +7,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BaseResponse<T> {
-    private static final String SUCCESS_STATUS = "success";
-    private static final String FAIL_STATUS = "fail";
+    private static final String SUCCESS = CommonCode.STATUS_SUCCESS;
+    private static final String FAIL = CommonCode.STATUS_FAIL;
 
     private String status;
     private String code;
@@ -30,24 +30,24 @@ public class BaseResponse<T> {
     }
 
     public static <T> BaseResponse<T> successResponse(T data) {
-        return new BaseResponse<T>(SUCCESS_STATUS, ResponseCode.SUCCESS.getCode(), data, ResponseCode.SUCCESS.getMessage());
+        return new BaseResponse<T>(SUCCESS, ResponseCode.SUCCESS.getCode(), data, ResponseCode.SUCCESS.getMessage());
     }
 
     public static BaseResponse successResponse() {
-        return new BaseResponse(SUCCESS_STATUS, ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage());
+        return new BaseResponse(SUCCESS, ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage());
     }
 
-    public static <T> BaseResponse<T> failResponse(Exception e) {
+    public static BaseResponse failResponse(Exception e) {
         e.printStackTrace();
-        return new BaseResponse<>(FAIL_STATUS, ResponseCode.SERVER_ERROR.getCode(), null, ResponseCode.SERVER_ERROR.getMessage());
+        return new BaseResponse<>(FAIL, ResponseCode.SERVER_ERROR.getCode(), null, ResponseCode.SERVER_ERROR.getMessage());
     }
 
-    public static <T> BaseResponse<T> failResponse(ResponseCode e) {
-        return new BaseResponse<>(FAIL_STATUS, e.getCode(), null, e.getMessage());
+    public static BaseResponse failResponse(ResponseCode e) {
+        return new BaseResponse<>(FAIL, e.getCode(), null, e.getMessage());
     }
 
     public static <T> BaseResponse<T> failResponse(T data, ResponseCode e) {
-        return new BaseResponse<T>(FAIL_STATUS, e.getCode(), data, e.getMessage());
+        return new BaseResponse<T>(FAIL, e.getCode(), data, e.getMessage());
     }
 
 }
