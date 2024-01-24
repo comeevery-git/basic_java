@@ -1,6 +1,7 @@
 package app.application.vo.member;
 
-import app.domain.model.enums.Role;
+import app.domain.model.entity.member.Member;
+import app.domain.model.entity.member.Role;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,11 +34,21 @@ public class MemberVo {
     private String createdDate;
 
     @Schema(description = "최초 생성 회원 아이디", example = "2021-07-01T00:00:00")
-    private String createdMemberId;
+    private Long createdMemberId;
 
     @Schema(description = "최종 수정일", example = "2021-07-01T00:00:00")
     private String updatedDate;
 
     @Schema(description = "최종 수정 회원 아이디", example = "2312310001")
     private Long updatedMemberId;
+
+
+    public static MemberVo toVo(Member member) {
+        return MemberVo.builder()
+                .memberId(member.getMemberId())
+                .name(member.getName())
+                .email(member.getEmail())
+                .role(member.getRole())
+                .build();
+    }
 }

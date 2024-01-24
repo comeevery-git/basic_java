@@ -3,7 +3,9 @@ package app.presentation;
 import app.application.dto.member.CreateMemberDto;
 import app.application.vo.member.CreateMemberVo;
 import app.application.vo.member.MemberVo;
+import app.domain.model.common.BaseResponse;
 import app.domain.service.MemberService;
+import app.infrastructure.exception.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,31 +28,38 @@ public class MemberController {
     @GetMapping("/{memberId}")
     @Operation(summary = "회원 정보 조회", description = "회원 정보를 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success"
+            @ApiResponse(responseCode = "200", description = "성공"
                     , content = @Content(schema = @Schema(implementation = MemberVo.class))),
-            @ApiResponse(responseCode = "401", description = "Authentication failure"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "Not Found"),
-            @ApiResponse(responseCode = "500", description = "Server error")
+            @ApiResponse(responseCode = "500", description = "시스템 오류가 발생했습니다."),
     })
-    public MemberVo getMember(@Parameter(name = "memberId", example = "2312310001") @PathVariable final Long memberId) {
-        return MemberVo.builder().memberId(memberId).build();
+    public BaseResponse<MemberVo> getMember(@PathVariable(name = "memberId") final Long memberId) {
+        try {
+            MemberVo memberVo = memberService.getMember(memberId);
+            return BaseResponse.successResponse(memberVo);
+        } catch (CustomException e) {
+            return BaseResponse.failResponse(e.getResponseCode());
+        } catch (Exception e) {
+            return BaseResponse.failResponse(e);
+        }
     }
 
     @PostMapping
     @Operation(summary = "회원 정보 등록", description = "회원 정보를 등록합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Success"
+            @ApiResponse(responseCode = "200", description = "성공"
                     , content = @Content(schema = @Schema(implementation = CreateMemberVo.class))),
-            @ApiResponse(responseCode = "401", description = "Authentication failure"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "Not Found"),
-            @ApiResponse(responseCode = "500", description = "Server error")
+            @ApiResponse(responseCode = "500", description = "시스템 오류가 발생했습니다."),
     })
-    public CreateMemberVo createMember(@RequestBody final CreateMemberDto createMemberDto) {
+    public BaseResponse<CreateMemberVo> createMember(@RequestBody final CreateMemberDto createMemberDto) {
         log.info("createMemberDto: {}", createMemberDto);
-
-        return memberService.createMember(createMemberDto);
+        try {
+            CreateMemberVo memberVo = memberService.createMember(createMemberDto);
+            return BaseResponse.successResponse(memberVo);
+        } catch (CustomException e) {
+            return BaseResponse.failResponse(e.getResponseCode());
+        } catch (Exception e) {
+            return BaseResponse.failResponse(e);
+        }
     }
 
 

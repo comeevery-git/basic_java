@@ -1,7 +1,7 @@
 package app.application.vo.member;
 
-import app.domain.model.entity.Member;
-import app.domain.model.enums.Role;
+import app.domain.model.entity.member.Member;
+import app.domain.model.entity.member.Role;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;

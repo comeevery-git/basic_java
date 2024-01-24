@@ -1,9 +1,7 @@
-package app.domain.model.entity;
+package app.domain.model.entity.member;
 
-import app.domain.model.enums.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -48,7 +46,7 @@ public class Member {
     @CreationTimestamp
     private LocalDateTime createdDate;
 
-    @Column(name = "created_member_id", nullable = false)
+    @Column(name = "created_member_id")
     @Schema(description = "최초 생성 회원 아이디", example = "2021-07-01T00:00:00")
     private Long createdMemberId;
 

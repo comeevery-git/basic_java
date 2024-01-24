@@ -1,5 +1,6 @@
-package app.domain.model.entity;
+package app.domain.model.entity.payment;
 
+import app.domain.model.entity.member.Member;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -34,6 +35,6 @@ public class Payment {
     @CreationTimestamp
     private LocalDateTime createdDate;
 
-    @Column(name = "created_member_id", nullable = false)
+    @Column(name = "created_member_id")
     private Long createdMemberId;
 }

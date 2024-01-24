@@ -1,5 +1,6 @@
-package app.domain.model.entity;
+package app.domain.model.entity.wallet;
 
+import app.domain.model.entity.member.Member;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -29,7 +30,7 @@ public class Wallet {
     @CreationTimestamp
     private LocalDateTime createdDate;
 
-    @Column(name = "created_member_id", nullable = false)
+    @Column(name = "created_member_id")
     private Long createdMemberId;
 
     @Temporal(TemporalType.TIMESTAMP)
