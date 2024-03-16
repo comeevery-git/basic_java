@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Schema(description = "회원 생성 요청 정보")
+@Schema(description = "결제수단 수정 요청 정보")
 @Setter
 @Getter
 @ToString

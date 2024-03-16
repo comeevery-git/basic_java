@@ -1,11 +1,15 @@
 package app.application.vo.payment;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import app.domain.model.entity.payment.Payment;
 import app.domain.model.entity.payment.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -29,11 +33,12 @@ public class UpdatePaymentVo {
     @Schema(description = "결제수단 고유 아이디", example = "2312310001")
     private Long paymentId;
 
+    @Enumerated(EnumType.STRING)
     @Schema(description = "결제수단 상태", example = "I", implementation = Status.class)
     private Status status;
 
     @Schema(description = "최종 수정일", example = "2021-07-01T00:00:00")
-    private String updatedDate;
+    private LocalDateTime updatedDate;
 
     public static UpdatePaymentVo toVo(Payment payment) {
         return UpdatePaymentVo.builder()

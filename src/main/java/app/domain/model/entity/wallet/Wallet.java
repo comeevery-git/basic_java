@@ -25,7 +25,6 @@ public class Wallet {
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date", nullable = false)
     @CreationTimestamp
     private LocalDateTime createdDate;
@@ -33,7 +32,6 @@ public class Wallet {
     @Column(name = "created_member_id")
     private Long createdMemberId;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_date")
     @UpdateTimestamp
     private LocalDateTime updatedDate;

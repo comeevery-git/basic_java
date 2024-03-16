@@ -1,5 +1,6 @@
 package app.presentation;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,10 +44,12 @@ public class PaymentController {
 	}
 
 
-	@PutMapping
+	@PutMapping("/{payment_id}")
 	@Operation(summary = "결제수단 수정", description = "결제수단을 수정합니다.")
 	@CommonResponseCode
-	public BaseResponse<UpdatePaymentVo> updatePayment(@RequestBody final UpdatePaymentDto dto) {
+	public BaseResponse<UpdatePaymentVo> updatePayment(@PathVariable(name = "payment_id") final Long paymentId
+												  		, @RequestBody final UpdatePaymentDto dto) {
+		dto.setPaymentId(paymentId);
 		log.info("UpdatePaymentDto: {}", dto);
 		try {
 			UpdatePaymentVo paymentVo = paymentService.updatePayment(dto);

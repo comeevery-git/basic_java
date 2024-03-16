@@ -17,6 +17,6 @@ import lombok.ToString;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class IdentityVerificationDto {
     @NotBlank
-    @Schema(description = "회원 이름", example = "김동동", required = true)
+    @Schema(description = "회원 이름", example = "김동동", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 }

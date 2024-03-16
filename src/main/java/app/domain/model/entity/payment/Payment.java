@@ -3,10 +3,12 @@ package app.domain.model.entity.payment;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -44,28 +46,27 @@ public class Payment {
     @Column(name = "payment_method_number", nullable = false, length = 50)
     private String paymentMethodNumber;
 
-    @Schema(description = "결제수단 상태", example = "A", implementation = Status.class)
+    @Schema(description = "결제수단 상태", example = "A")
     @Column(name = "status", nullable = false)
-    @Enumerated
     private Status status;
 
     @Schema(description = "회원 고유 아이디", example = "2312310001")
     @Column(name = "member_id", nullable = false)
     private Long memberId;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Schema(description = "최초 생성 회원 아이디", example = "2021-07-01T00:00:00")
+    @Schema(description = "최초 생성일", example = "2021-07-01T00:00:00")
     @Column(name = "created_date", nullable = false)
     @CreationTimestamp
     private LocalDateTime createdDate;
 
-    @Schema(description = "최초 생성일", example = "2021-07-01T00:00:00")
+    @Schema(description = "최초 생성 회원 아이디", example = "2021-07-01T00:00:00")
     @Column(name = "created_member_id")
     private Long createdMemberId;
 
     @Schema(description = "최종 수정일", example = "2021-07-01T00:00:00")
     @Column(name = "updated_date", nullable = false)
-    private String updatedDate;
+    @UpdateTimestamp
+    private LocalDateTime updatedDate;
 
     @Schema(description = "최종 수정 회원 아이디", example = "2312310001")
     @Column(name = "updated_member_id", nullable = false)

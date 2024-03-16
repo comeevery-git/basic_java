@@ -57,11 +57,10 @@ class PaymentControllerTest {
 	@DisplayName("결제수단 수정 테스트")
 	public void 결제수단_수정() throws Exception {
 		UpdatePaymentDto dto = new UpdatePaymentDto();
-		dto.setPaymentId(1L);
 		dto.setMemberId(1L);
 		dto.setStatus(Status.INACTIVE);
 
-		mockMvc.perform(put("/api/v1/payments")
+		mockMvc.perform(put("/api/v1/payments/1")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(dto))
 			)

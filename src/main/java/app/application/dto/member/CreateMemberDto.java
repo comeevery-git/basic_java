@@ -20,16 +20,16 @@ import lombok.ToString;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CreateMemberDto {
     @NotBlank
-    @Schema(description = "회원 이름", example = "김동동", required = true)
+    @Schema(description = "회원 이름", example = "김동동", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
     @NotBlank
-    @Schema(description = "회원 이메일", example = "example@gmail.com", required = true)
+    @Schema(description = "회원 이메일", example = "example@gmail.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
     @Enumerated(EnumType.STRING)
     @NotBlank
-    @Schema(description = "회원 권한", example = "MEMBER", required = true)
+    @Schema(description = "회원 권한", example = "MEMBER", implementation = Role.class, requiredMode = Schema.RequiredMode.REQUIRED)
     private Role role;
 
 }

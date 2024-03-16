@@ -60,8 +60,8 @@ public class PaymentService {
             }
             payment.setUpdatedMemberId(dto.getMemberId());
 
-            Payment originPayment = paymentRepository.save(payment);
-            log.info("### 결제수단 수정 결과: {}", originPayment);
+            Payment result = paymentRepository.save(payment);
+            log.info("### 결제수단 수정 결과: {}", result);
 
             return UpdatePaymentVo.toVo(payment);
         } catch (DataIntegrityViolationException e) {
