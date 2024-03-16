@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -57,11 +58,12 @@ class MemberControllerTest {
     public void 회원_조회() throws Exception {
         Long memberId = 1L;
 
-        mockMvc.perform(get("/api/v1/members/" + memberId))
+        MvcResult result = mockMvc.perform(get("/api/v1/members/" + memberId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(CommonCode.STATUS_SUCCESS))
                 .andExpect(jsonPath("$.code").value(ResponseCode.SUCCESS.getCode()))
-                .andDo(print());
+                .andDo(print())
+                .andReturn();
     }
 
 

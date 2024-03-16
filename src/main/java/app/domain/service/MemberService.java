@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @AllArgsConstructor
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class MemberService {
     private final MemberRepository memberRepository;
 
+    @Transactional
     public CreateMemberVo createMember(CreateMemberDto dto) {
         try {
             Member member = Member.builder()
@@ -38,6 +40,7 @@ public class MemberService {
         }
     }
 
+    @Transactional(readOnly = true)
     public MemberVo getMember(Long memberId) {
         try {
             Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ResponseCode.NOT_EXIST));
@@ -48,6 +51,7 @@ public class MemberService {
         } catch (Exception e) {
             throw e;
         }
-
     }
+
+
 }
