@@ -34,7 +34,7 @@ public class CreatePaymentVo {
     private Long paymentId;
 
     @Enumerated(EnumType.STRING)
-    @Schema(description = "결제수단 상태", example = "A", implementation = Status.class)
+    @Schema(description = "결제수단 상태(생성 시 A)", example = "A", implementation = Status.class, hidden = true)
     private Status status;
 
     @Schema(description = "최초 생성일", example = "2021-07-01T00:00:00")

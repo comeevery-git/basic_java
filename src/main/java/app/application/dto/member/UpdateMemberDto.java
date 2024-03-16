@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import app.domain.model.entity.member.Role;
+import app.domain.model.entity.payment.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,6 +29,9 @@ public class UpdateMemberDto {
 
     @Schema(description = "수정 할 회원 이메일", example = "example@gmail.com", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String email;
+
+    @Schema(description = "수정 할 회원 상태 (A: 활성화, I: 비활성화, D: 삭제)", example = "I", implementation = Status.class)
+    private Status status;
 
     @Schema(description = "수정 할 회원 권한", example = "MEMBER", implementation = Role.class, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private Role role;
