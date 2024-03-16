@@ -10,6 +10,7 @@ import app.application.vo.payment.CreatePaymentVo;
 import app.application.vo.payment.UpdatePaymentVo;
 import app.domain.model.common.ResponseCode;
 import app.domain.model.entity.payment.Payment;
+import app.domain.model.entity.payment.Status;
 import app.domain.repository.PaymentRepository;
 import app.infrastructure.exception.CustomException;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+    private final PaymentHistoryService paymentHistoryService;
 
     @Transactional
     public CreatePaymentVo createPayment(CreatePaymentDto dto) {
@@ -49,6 +51,9 @@ public class PaymentService {
             Payment payment = paymentRepository.findById(dto.getPaymentId()).orElseThrow(() -> new CustomException(ResponseCode.NOT_EXIST));
             log.info("### 결제수단 조회 결과: {}", payment);
 
+            // 결제수단 수정 시 이력 저장
+            paymentHistoryService.createPaymentHistory(payment);
+
             if (!dto.getPaymentMethod().isBlank()) {
                 payment.setPaymentMethod(dto.getPaymentMethod());
             }
@@ -64,6 +69,36 @@ public class PaymentService {
             log.info("### 결제수단 수정 결과: {}", result);
 
             return UpdatePaymentVo.toVo(payment);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ResponseCode.CONFLICT_DATA);
+        } catch (CustomException e) {
+            throw new CustomException(e.getResponseCode());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    /**
+     * TODO 생성 시 생성 및 수정 일어나도록 테스트
+     * @param dto
+     * @return
+     */
+    @Transactional
+    public CreatePaymentVo createPaymentAndUpdate(CreatePaymentDto dto) {
+        try {
+            Payment payment = Payment.builder()
+                .memberId(dto.getMemberId())
+                .paymentMethod(dto.getPaymentMethod())
+                .paymentMethodNumber(dto.getPaymentMethodNumber())
+                .createdMemberId(dto.getMemberId())
+                .build();
+            Payment result = paymentRepository.save(payment);
+            log.info("### 결제수단 생성 결과: {}", result);
+
+            UpdatePaymentDto updatePaymentDto = UpdatePaymentDto.builder().status(Status.PENDING).build();
+            this.updatePayment(updatePaymentDto);
+
+            return CreatePaymentVo.toVo(result);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ResponseCode.CONFLICT_DATA);
         } catch (CustomException e) {

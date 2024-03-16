@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import app.domain.model.entity.payment.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
+@Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UpdatePaymentDto {
 
