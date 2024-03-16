@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import app.application.dto.payment.CreatePaymentDto;
+import app.application.dto.payment.UpdatePaymentDto;
 import app.application.vo.payment.CreatePaymentVo;
+import app.application.vo.payment.UpdatePaymentVo;
 import app.domain.model.common.ResponseCode;
 import app.domain.model.entity.payment.Payment;
 import app.domain.repository.PaymentRepository;
@@ -41,6 +43,34 @@ public class PaymentService {
         }
     }
 
+    @Transactional
+    public UpdatePaymentVo updatePayment(UpdatePaymentDto dto) {
+        try {
+            Payment payment = paymentRepository.findById(dto.getPaymentId()).orElseThrow(() -> new CustomException(ResponseCode.NOT_EXIST));
+            log.info("### 결제수단 조회 결과: {}", payment);
 
+            if (!dto.getPaymentMethod().isBlank()) {
+                payment.setPaymentMethod(dto.getPaymentMethod());
+            }
+            if (!dto.getPaymentMethodNumber().isBlank()) {
+                payment.setPaymentMethodNumber(dto.getPaymentMethodNumber());
+            }
+            if (!dto.getStatus().equals(payment.getStatus())) {
+                payment.setStatus(dto.getStatus());
+            }
+            payment.setUpdatedMemberId(dto.getMemberId());
+
+            Payment originPayment = paymentRepository.save(payment);
+            log.info("### 결제수단 수정 결과: {}", originPayment);
+
+            return UpdatePaymentVo.toVo(payment);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(ResponseCode.CONFLICT_DATA);
+        } catch (CustomException e) {
+            throw new CustomException(e.getResponseCode());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
 }

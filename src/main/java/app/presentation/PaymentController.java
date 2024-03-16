@@ -1,11 +1,15 @@
 package app.presentation;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import app.application.dto.payment.CreatePaymentDto;
+import app.application.dto.payment.UpdatePaymentDto;
 import app.application.vo.payment.CreatePaymentVo;
+import app.application.vo.payment.UpdatePaymentVo;
 import app.domain.model.common.BaseResponse;
 import app.domain.service.payment.PaymentService;
 import app.infrastructure.annotation.CommonResponseCode;
@@ -15,10 +19,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Tag(name = "Payment", description = "결제 관련 API")
+@Tag(name = "Payment", description = "결제=>결제수단 관련 API")
 @Slf4j
 @RestController
 @AllArgsConstructor
+@RequestMapping("/api/v1/payments")
 public class PaymentController {
 	private final PaymentService paymentService;
 
@@ -29,6 +34,22 @@ public class PaymentController {
 		log.info("CreatePaymentDto: {}", dto);
 		try {
 			CreatePaymentVo paymentVo = paymentService.createPayment(dto);
+			return BaseResponse.successResponse(paymentVo);
+		} catch (CustomException e) {
+			return BaseResponse.failResponse(e.getResponseCode());
+		} catch (Exception e) {
+			return BaseResponse.failResponse(e);
+		}
+	}
+
+
+	@PutMapping
+	@Operation(summary = "결제수단 수정", description = "결제수단을 수정합니다.")
+	@CommonResponseCode
+	public BaseResponse<UpdatePaymentVo> updatePayment(@RequestBody final UpdatePaymentDto dto) {
+		log.info("UpdatePaymentDto: {}", dto);
+		try {
+			UpdatePaymentVo paymentVo = paymentService.updatePayment(dto);
 			return BaseResponse.successResponse(paymentVo);
 		} catch (CustomException e) {
 			return BaseResponse.failResponse(e.getResponseCode());
