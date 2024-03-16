@@ -4,7 +4,7 @@ import app.application.dto.member.CreateMemberDto;
 import app.domain.model.common.CommonCode;
 import app.domain.model.common.ResponseCode;
 import app.domain.model.entity.member.Role;
-import app.domain.service.MemberService;
+import app.domain.service.member.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

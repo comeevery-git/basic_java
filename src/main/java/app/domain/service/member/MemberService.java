@@ -1,4 +1,4 @@
-package app.domain.service;
+package app.domain.service.member;
 
 import app.application.dto.member.CreateMemberDto;
 import app.application.vo.member.CreateMemberVo;

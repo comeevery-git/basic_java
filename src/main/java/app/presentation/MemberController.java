@@ -11,13 +11,10 @@ import app.application.dto.member.CreateMemberDto;
 import app.application.vo.member.CreateMemberVo;
 import app.application.vo.member.MemberVo;
 import app.domain.model.common.BaseResponse;
-import app.domain.service.MemberService;
+import app.domain.service.member.MemberService;
 import app.infrastructure.annotation.CommonResponseCode;
 import app.infrastructure.exception.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +30,6 @@ public class MemberController {
     @GetMapping("/{memberId}")
     @Operation(summary = "회원 정보 조회", description = "회원 정보를 조회합니다.")
     @CommonResponseCode
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = MemberVo.class)))
     public BaseResponse<MemberVo> getMember(@PathVariable(name = "memberId") final Long memberId) {
         try {
             MemberVo memberVo = memberService.getMember(memberId);
@@ -48,7 +44,6 @@ public class MemberController {
     @PostMapping
     @Operation(summary = "회원 정보 등록", description = "회원 정보를 등록합니다.")
     @CommonResponseCode
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = CreateMemberVo.class)))
     public BaseResponse<CreateMemberVo> createMember(@RequestBody final CreateMemberDto createMemberDto) {
         log.info("createMemberDto: {}", createMemberDto);
         try {
