@@ -56,7 +56,6 @@ public class MemberService {
         }
     }
 
-
     @Transactional
     public UpdateMemberVo updateMember(UpdateMemberDto dto) {
         try {

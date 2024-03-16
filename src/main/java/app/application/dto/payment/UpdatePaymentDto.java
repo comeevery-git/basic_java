@@ -30,7 +30,7 @@ public class UpdatePaymentDto {
     @Schema(description = "수정 할 결제수단 번호", example = "신용카드 번호", maxLength = 50)
     private String paymentMethodNumber;
 
-    @Schema(description = "수정 할 결제수단 상태 (A: 활성화, I: 비활성화, D: 삭제)", example = "I", implementation = Status.class)
+    @Schema(description = "수정 할 결제수단 상태 (A: 활성화, I: 비활성화, P:승인대기, D: 삭제)", example = "I", implementation = Status.class)
     private Status status;
 
 }

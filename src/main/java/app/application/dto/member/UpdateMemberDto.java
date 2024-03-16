@@ -30,7 +30,7 @@ public class UpdateMemberDto {
     @Schema(description = "수정 할 회원 이메일", example = "example@gmail.com", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String email;
 
-    @Schema(description = "수정 할 회원 상태 (A: 활성화, I: 비활성화, D: 삭제)", example = "I", implementation = Status.class)
+    @Schema(description = "수정 할 회원 상태 (A: 활성화, I: 비활성화, P:승인대기 D: 삭제)", example = "I", implementation = Status.class)
     private Status status;
 
     @Schema(description = "수정 할 회원 권한", example = "MEMBER", implementation = Role.class, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
