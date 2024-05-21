@@ -16,12 +16,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import app.application.dto.payment.CreatePaymentDto;
-import app.application.dto.payment.UpdatePaymentDto;
-import app.domain.model.common.CommonCode;
-import app.domain.model.common.ResponseCode;
-import app.domain.model.entity.payment.Status;
-import app.domain.service.payment.PaymentService;
+import app.payment.application.dto.CreatePaymentDto;
+import app.payment.application.dto.UpdatePaymentDto;
+import app.common.domain.model.common.CommonCode;
+import app.common.domain.model.common.ResponseCode;
+import app.payment.domain.model.entity.Status;
+import app.payment.domain.service.PaymentService;
+import app.payment.presentation.PaymentController;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(PaymentController.class)

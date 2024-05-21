@@ -11,6 +11,15 @@
   - `jdbc:h2:mem:testdb`
 - JPA
 
+----
+
+> 문서화 방식
+- gradle restdocs-api-spec 0.18.4
+
+`./gradlew openapi3`
+
+
+
 
 ----
 

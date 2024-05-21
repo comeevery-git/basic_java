@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,16 +18,16 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import app.application.dto.member.CreateMemberDto;
-import app.application.dto.member.UpdateMemberDto;
-import app.domain.model.common.CommonCode;
-import app.domain.model.common.ResponseCode;
-import app.domain.model.entity.member.Role;
-import app.domain.service.member.MemberService;
-import app.domain.utils.JsonUtils;
+import app.common.domain.model.common.CommonCode;
+import app.common.domain.model.common.ResponseCode;
+import app.common.domain.utils.JsonUtils;
+import app.member.application.dto.UpdateMemberDto;
+import app.member.domain.model.entity.Role;
+import app.member.domain.service.MemberService;
+import app.member.presentation.MemberController;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(MemberController.class)
+@WebMvcTest(value = MemberController.class)
 class MemberControllerTest {
 
     @Autowired
