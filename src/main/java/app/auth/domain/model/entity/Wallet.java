@@ -13,7 +13,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name="wallet")
 public class Wallet {
@@ -27,21 +35,23 @@ public class Wallet {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
-    @ManyToOne
-    @JoinColumn(name = "memberId", nullable = false)
-    private Member member;
+    @Column(name = "member_id", nullable = false)
+    private String memberId;
+    // @ManyToOne
+    // @JoinColumn(name = "memberId", nullable = false)
+    // private Member member;
 
     @Column(name = "created_date", nullable = false)
     @CreationTimestamp
     private LocalDateTime createdDate;
 
     @Column(name = "created_member_id")
-    private Long createdMemberId;
+    private String createdMemberId;
 
     @Column(name = "updated_date")
     @UpdateTimestamp
     private LocalDateTime updatedDate;
 
     @Column(name = "updated_member_id")
-    private Long updatedMemberId;
+    private String updatedMemberId;
 }

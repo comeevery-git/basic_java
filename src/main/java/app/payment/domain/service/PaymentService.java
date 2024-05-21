@@ -4,6 +4,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import app.auth.domain.service.VerificationService;
 import app.payment.application.dto.CreatePaymentDto;
 import app.payment.application.dto.UpdatePaymentDto;
 import app.payment.application.vo.CreatePaymentVo;
@@ -20,8 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Service
 public class PaymentService {
-    private final PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository; // TODO repository infrastructure 로 이동 - 인터페이스도 ORM 사용하므로 함께 이동 권장
     private final PaymentHistoryService paymentHistoryService;
+    private final VerificationService verificationService;
 
     @Transactional
     public CreatePaymentVo createPayment(CreatePaymentDto dto) {
@@ -34,6 +36,8 @@ public class PaymentService {
                             .build();
             Payment result = paymentRepository.save(payment);
             log.info("### 결제수단 생성 결과: {}", result);
+
+            verificationService.addWalletAccountAsync(); // 지갑 잔액 추가 비동기 요청
 
             return CreatePaymentVo.toVo(result);
         } catch (DataIntegrityViolationException e) {
