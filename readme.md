@@ -15,12 +15,7 @@
 - JPA
 
 - 문서화 springdoc Swagger 2.4.0
-[//]: # (- gradle restdocs-api-spec 0.18.4)
-[//]: # (`./gradlew openapi3`)
-[//]: # (=> JVM 21 지원안함)
-
-
----
+[//]: # (gradle restdocs-api-spec 0.18.4 사용하려고 했으나, `./gradlew openapi3` -> JVM 21 지원안함)
 
 
 > 
