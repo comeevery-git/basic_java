@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle" # "pip", "maven", "npm", "nuget", "composer" 등으로 수정 가능
+    directory: "/"
+    schedule:
+      interval: "weekly" # "daily", "monthly", "yearly"
+    commit-message:
+      prefix: "chore(deps)"
+
