@@ -58,7 +58,7 @@ dependencies {
 
     // LOG
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
-    implementation 'org.slf4j:slf4j-api:2.0.3'
+    implementation 'org.slf4j:slf4j-api:2.0.13'
 
     // TEST
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
