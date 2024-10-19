@@ -116,11 +116,17 @@ jobs:
                         "path": file_path,
                         "position": position
                     }
-    
+        
+                    print(f"Commenting on file: {file_path}, position: {position}")
+
                     comment_url = f"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments"
                     print(f"Posting comment to GitHub for file: {file_path}")
-                    requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
-                    print(f"Comment posted successfully for file: {file_path}")
+                    response = requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
+                    if response.status_code == 201:
+                        print(f"Comment posted successfully for file: {file_path}")
+                    else:
+                        print(f"Failed to post comment. Status code: {response.status_code}, Response: {response.text}")
+
     
                 # 각 파일을 처리한 후 파일 이름을 기록
                 processed_files.add(file_path)
