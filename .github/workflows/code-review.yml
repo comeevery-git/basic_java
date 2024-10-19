@@ -56,12 +56,15 @@ jobs:
 
         # GPT 리뷰 결과 추출
         review_feedback = response.choices[0].message.content
-        print(review_feedback)
+
+        # 리뷰 결과를 gpt_review.txt 파일에 저장
+        with open('gpt_review.txt', 'w') as output_file:
+            output_file.write(review_feedback)
         EOF
 
     - name: Post review comment on PR
       run: |
-        REVIEW_COMMENT=$(python -c 'import json; print(open("gpt_review.txt").read())')
+        REVIEW_COMMENT=$(cat gpt_review.txt)
         curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -d "{\"body\": \"${REVIEW_COMMENT}\"}" \
           "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
