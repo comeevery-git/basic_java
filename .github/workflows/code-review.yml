@@ -43,10 +43,11 @@ jobs:
         # 시스템 프롬프트 및 모델명 가져오기
         system_prompt = """${{ secrets.SYSTEM_PROMPT }}"""
         model_name = "${{ secrets.OPENAI_MODEL }}"
+        summary_system_prompt = """${{ secrets.SUMMARY_SYSTEM_PROMPT }}"""
 
-        # 처리된 파일과 라인 기록 (중복 방지)
+        # 처리된 파일 기록 (중복 방지)
         processed_files = set()  # 각 파일을 기록
-        processed_lines = {}  # 각 파일별로 라인을 기록하기 위한 딕셔너리로 수정
+        review_history = []  # 각 파일의 리뷰 기록을 저장
 
         # GitHub API 호출 로그
         print("Fetching changed files from GitHub API...")
@@ -85,10 +86,6 @@ jobs:
                 patch = file.get('patch', '')
                 print(f"Analyzing patch for file: {file_path}")
 
-                # 각 파일마다 중복 라인 처리를 위한 집합 생성
-                if file_path not in processed_lines:
-                    processed_lines[file_path] = set()
-
                 # 전체 패치 내용을 GPT에게 전달
                 if patch:  # 패치가 존재할 경우에만 처리
                     print(f"Calling GPT API for patch in file: {file_path}")
@@ -99,6 +96,7 @@ jobs:
                                 {"role": "system", "content": system_prompt},
                                 {"role": "user", "content": f"Here is the code diff for context:\n{patch}"}
                             ],
+                            max_tokens=500,
                             timeout=30
                         )
                     except Exception as e:
@@ -109,40 +107,64 @@ jobs:
                     print(f"GPT response received for file: {file_path}")
                     print(f"Review comment: {review_comment}")
 
+                    # 리뷰 히스토리 기록
+                    review_history.append(f"File: {file_path}\nReview: {review_comment}")
+
                     # 변경된 파일과 라인에 리뷰 코멘트를 추가
                     commit_id = "${{ github.event.pull_request.head.sha }}"
-                    line_number = file.get('patch').split('\n').index(next(line for line in file['patch'].split('\n') if line.startswith('+'))) + 1
-                    comment_body = {
-                        "body": review_comment,
-                        "path": file_path,
-                        "line": line_number,
-                        "side": "RIGHT",
-                        "commit_id": commit_id
-                    }
+                    position = file.get('position', None)  # 'position' 필드 사용
+                    if position is not None:
+                        comment_body = {
+                            "body": review_comment,
+                            "path": file_path,
+                            "position": position,  # 'line' 대신 'position' 사용
+                            "side": "RIGHT",
+                            "commit_id": commit_id
+                        }
 
-                    # 코멘트를 추가하기 전 파일 경로와 위치를 로그로 출력
-                    print(f"Commenting on file: {file_path}, line: {line_number}")
+                        # 코멘트를 추가하기 전 파일 경로와 위치를 로그로 출력
+                        print(f"Commenting on file: {file_path}, position: {position}")
 
-                    comment_url = f"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments"
-                    response = requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
+                        comment_url = f"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments"
+                        response = requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
 
-                    # 응답 상태 확인
-                    if response.status_code == 201:
-                        print(f"Comment posted successfully for file: {file_path}")
-                    else:
-                        print(f"Failed to post comment. Status code: {response.status_code}, Response: {response.text}")
+                        # 응답 상태 확인
+                        if response.status_code == 201:
+                            print(f"Comment posted successfully for file: {file_path}")
+                        else:
+                            print(f"Failed to post comment. Status code: {response.status_code}, Response: {response.text}")
 
                 # 각 파일을 처리한 후 파일 이름을 기록
                 processed_files.add(file_path)
+
+            # 최종 요약 요청
+            review_history_text = "\n\n".join(review_history)
+            print("Requesting final review summary from GPT...")
+            try:
+                final_review_response = openai.chat.completions.create(
+                    model=model_name,
+                    messages=[
+                        {"role": "system", "content": summary_system_prompt},
+                        {"role": "user", "content": review_history_text}
+                    ],
+                    max_tokens=1000,
+                    timeout=60  # 타임아웃을 60초로 설정
+                )
+            except Exception as e:
+                print(f"Error in GPT summary request: {e}")
+                exit(1)
+
+            final_review_comment = final_review_response.choices[0].message.content
+            print(f"Final review comment received: {final_review_comment}")
+
+            # 최종 요약 코멘트 추가
+            comment_url = f"https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+            requests.post(comment_url, headers=headers, data=json.dumps({"body": final_review_comment}))
+            print("Final review comment posted.")
 
         else:
             print(f"Unexpected status code: {response.status_code}")
             exit(1)
 
-        # 최종 리뷰 요약 코멘트 추가
-        final_comment = "### 최종 리뷰 요약: .java 파일에 대한 모든 변경 사항을 검토 완료했습니다."
-        comment_url = f"https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
-        requests.post(comment_url, headers=headers, data=json.dumps({"body": final_comment}))
-        print("Final review comment posted.")
         exit(0)
         EOF
