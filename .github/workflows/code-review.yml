@@ -45,7 +45,7 @@ jobs:
         model_name = "${{ secrets.OPENAI_MODEL }}"
         summary_system_prompt = """${{ secrets.SUMMARY_SYSTEM_PROMPT }}"""
 
-        # 처리된 파일과 라인 기록 (중복 방지)
+        # 처리된 파일 기록 (중복 방지)
         processed_files = set()  # 각 파일을 기록
         review_history = []  # 각 파일의 리뷰 기록을 저장
 
@@ -85,10 +85,6 @@ jobs:
                 print(f"Processing file: {file_path}")
                 patch = file.get('patch', '')
                 print(f"Analyzing patch for file: {file_path}")
-
-                # 각 파일마다 중복 라인 처리를 위한 집합 생성
-                if file_path not in processed_lines:
-                    processed_lines[file_path] = set()
 
                 # 전체 패치 내용을 GPT에게 전달
                 if patch:  # 패치가 존재할 경우에만 처리
