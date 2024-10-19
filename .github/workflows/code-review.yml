@@ -44,8 +44,9 @@ jobs:
         system_prompt = """${{ secrets.SYSTEM_PROMPT }}"""
         model_name = "${{ secrets.OPENAI_MODEL }}"
 
-        # 처리된 라인을 저장하기 위한 집합 (중복 방지)
+        # 처리된 파일과 라인 기록 (중복 방지)
         processed_files = set()  # 각 파일을 기록
+        processed_lines = set()  # 각 라인을 기록
 
         # GitHub API 호출 로그
         print("Fetching changed files from GitHub API...")
@@ -83,15 +84,22 @@ jobs:
                 patch = file.get('patch', '')
                 print(f"Analyzing patch for file: {file_path}")
 
-                # 패치 파일에서 변경된 라인(+로 시작하는 라인과 -로 시작하는 라인) 처리
+                # 각 라인 중복 처리 방지
                 removed_lines = []
                 added_lines = []
 
                 for line in patch.split('\n'):
+                    if line in processed_lines:
+                        print(f"Skipping already processed line: {line}")
+                        continue
+
                     if line.startswith('-') and not line.startswith('***'):  # 삭제된 라인
                         removed_lines.append(line[1:].strip())
                     elif line.startswith('+') and not line.startswith('+++'):  # 추가된 라인
                         added_lines.append(line[1:].strip())
+
+                    # 처리된 라인 기록
+                    processed_lines.add(line)
 
                 # 각 파일을 처리한 후 파일 이름을 기록
                 processed_files.add(file_path)
