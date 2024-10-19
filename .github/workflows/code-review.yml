@@ -45,6 +45,7 @@ jobs:
         with open('pr_diff.txt', 'r') as file:
             diff_content = file.read()
 
+        # GPT 모델 호출
         response = openai.chat.completions.create(
             model=model_name,
             messages=[
@@ -53,7 +54,7 @@ jobs:
             ]
         )
 
-        # GPT 리뷰 결과 출력
+        # GPT 리뷰 결과 추출
         review_feedback = response['choices'][0]['message']['content']
         print(review_feedback)
         EOF
