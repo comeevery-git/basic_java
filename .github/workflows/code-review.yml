@@ -109,8 +109,8 @@ jobs:
                     print(f"GPT response received for file: {file_path}")
                     print(f"Review comment: {review_comment}")
         
-                    # 변경된 파일과 라인에 리뷰 코멘트를 추가 (position 사용)
-                    commit_id = file['sha']  # 현재 파일의 커밋 ID
+                    # 변경된 파일과 라인에 리뷰 코멘트를 추가
+                    commit_id = "${{ github.sha }}"  # 현재 PR에 맞는 commit SHA 값을 사용
                     patch_lines = patch.split('\n')
                     position = 0  # position은 패치 파일에서의 상대적인 위치
                     
@@ -125,7 +125,7 @@ jobs:
                         "path": file_path,
                         "position": position,  # 패치에서 계산된 position 사용
                         "side": "RIGHT",  # 변경된 코드에 대한 코멘트를 추가할 경우 'RIGHT'
-                        "commit_id": commit_id
+                        "commit_id": commit_id  # 현재 커밋 ID를 명시적으로 설정
                     }
                     
                     # 코멘트를 추가하기 전 파일 경로와 위치를 로그로 출력
@@ -155,3 +155,4 @@ jobs:
         print("Final review comment posted.")
         exit(0)
         EOF
+    
