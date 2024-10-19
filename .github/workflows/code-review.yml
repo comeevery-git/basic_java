@@ -55,7 +55,7 @@ jobs:
         )
 
         # GPT 리뷰 결과 추출
-        review_feedback = response['choices'][0]['message']['content']
+        review_feedback = response.choices[0].message.content
         print(review_feedback)
         EOF
 
