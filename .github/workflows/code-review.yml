@@ -36,6 +36,7 @@ jobs:
         import openai
         import requests
         import json
+        import time
 
         # OpenAI API Key 설정
         openai.api_key = "${{ secrets.OPENAI_API_KEY }}"
@@ -61,6 +62,7 @@ jobs:
         if response.status_code == 200:
             print("Files fetched successfully. Analyzing changes...")
             files_changed = response.json()
+            print(f"Files Changed: {files_changed}")  # 응답 데이터 출력
 
             for file in files_changed:
                 file_path = file['filename']
@@ -88,14 +90,14 @@ jobs:
                         if added_line:  # 추가된 내용이 있을 때만 GPT 분석
                             print(f"Calling GPT API for added line: {added_line}")
                             try:
-                                # OpenAI API 호출에 타임아웃 설정 (15초로 설정)
+                                # OpenAI API 호출에 타임아웃 설정 (30초로 설정)
                                 gpt_response = openai.chat.completions.create(
                                     model=model_name,
                                     messages=[
                                         {"role": "system", "content": system_prompt},
                                         {"role": "user", "content": f"Here is the code diff for context:\n{context}"}
                                     ],
-                                    timeout=15  # 타임아웃 설정
+                                    timeout=30  # 타임아웃 30초로 늘림
                                 )
                             except Exception as e:
                                 print(f"Error in GPT request: {e}")
@@ -103,6 +105,7 @@ jobs:
 
                             review_comment = gpt_response.choices[0].message.content
                             print(f"GPT response received for file: {file_path}")
+                            print(f"Review comment: {review_comment}")  # GPT 응답 데이터 출력
 
                             # 변경된 파일과 라인에 리뷰 코멘트를 추가
                             position = file['changes']  # 변경된 라인 위치 정보
@@ -115,6 +118,7 @@ jobs:
                             comment_url = f"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments"
                             print(f"Posting comment to GitHub for file: {file_path}")
                             requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
+                            print(f"Comment posted successfully for file: {file_path}")  # 댓글이 성공적으로 포스팅됐는지 확인
         else:
             print(f"Unexpected status code: {response.status_code}")
             exit(1)
