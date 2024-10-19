@@ -44,9 +44,8 @@ jobs:
         system_prompt = """${{ secrets.SYSTEM_PROMPT }}"""
         model_name = "${{ secrets.OPENAI_MODEL }}"
 
-        # 처리된 파일과 라인 기록 (중복 방지)
+        # 처리된 파일 기록 (중복 방지)
         processed_files = set()  # 각 파일을 기록
-        processed_lines = set()  # 각 라인을 기록
 
         # GitHub API 호출 로그
         print("Fetching changed files from GitHub API...")
@@ -67,7 +66,13 @@ jobs:
             files_changed = response.json()
             print(f"Files Changed: {files_changed}")  # 응답 데이터 출력
 
-            for file in files_changed:
+            java_files = [file for file in files_changed if file['filename'].endswith('.java')]
+
+            if not java_files:
+                print("No .java files to review.")
+                exit(0)
+
+            for file in java_files:
                 file_path = file['filename']
                 
                 # 이미 처리한 파일은 건너뛰기
@@ -75,34 +80,19 @@ jobs:
                     print(f"Skipping already processed file: {file_path}")
                     continue
 
-                # .java 파일만 처리
-                if not file_path.endswith('.java'):
-                    print(f"Skipping non-Java file: {file_path}")
-                    continue
-
                 print(f"Processing file: {file_path}")
                 patch = file.get('patch', '')
                 print(f"Analyzing patch for file: {file_path}")
 
-                # 각 라인 중복 처리 방지
+                # GPT API 호출을 위한 라인 추출
                 removed_lines = []
                 added_lines = []
 
                 for line in patch.split('\n'):
-                    if line in processed_lines:
-                        print(f"Skipping already processed line: {line}")
-                        continue
-
                     if line.startswith('-') and not line.startswith('***'):  # 삭제된 라인
                         removed_lines.append(line[1:].strip())
                     elif line.startswith('+') and not line.startswith('+++'):  # 추가된 라인
                         added_lines.append(line[1:].strip())
-
-                    # 처리된 라인 기록
-                    processed_lines.add(line)
-
-                # 각 파일을 처리한 후 파일 이름을 기록
-                processed_files.add(file_path)
 
                 # 삭제된 라인과 추가된 라인을 모두 컨텍스트로 GPT에게 전달
                 for added_line in added_lines:
@@ -111,14 +101,13 @@ jobs:
                     if added_line:  # 추가된 내용이 있을 때만 GPT 분석
                         print(f"Calling GPT API for added line: {added_line}")
                         try:
-                            # OpenAI API 호출에 타임아웃 설정 (30초로 설정)
                             gpt_response = openai.chat.completions.create(
                                 model=model_name,
                                 messages=[
                                     {"role": "system", "content": system_prompt},
                                     {"role": "user", "content": f"Here is the code diff for context:\n{context}"}
                                 ],
-                                timeout=30  # 타임아웃 30초로 설정
+                                timeout=30
                             )
                         except Exception as e:
                             print(f"Error in GPT request: {e}")
@@ -139,7 +128,11 @@ jobs:
                         comment_url = f"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments"
                         print(f"Posting comment to GitHub for file: {file_path}")
                         requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
-                        print(f"Comment posted successfully for file: {file_path}")  # 댓글이 성공적으로 포스팅됐는지 확인
+                        print(f"Comment posted successfully for file: {file_path}")
+
+                # 각 파일을 처리한 후 파일 이름을 기록
+                processed_files.add(file_path)
+
         else:
             print(f"Unexpected status code: {response.status_code}")
             exit(1)
