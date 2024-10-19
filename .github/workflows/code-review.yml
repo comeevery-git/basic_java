@@ -44,6 +44,9 @@ jobs:
           system_prompt = """${{ secrets.SYSTEM_PROMPT }}"""
           model_name = "${{ secrets.OPENAI_MODEL }}"
           
+          # GitHub API 호출 로그
+          print("Fetching changed files from GitHub API...")
+          
           # 변경된 파일과 라인 정보를 가져오기 위한 GitHub API 호출
           files_url = "https://api.github.com/repos/comeevery-git/basic_java/pulls/11/files"
           headers = {"Authorization": f"token ${{ secrets.GITHUB_TOKEN }}"}
@@ -56,6 +59,7 @@ jobs:
               exit(1)
           
           if response.status_code == 200:
+              print("Files fetched successfully. Analyzing changes...")
               files_changed = response.json()
           
               for file in files_changed:
@@ -65,6 +69,7 @@ jobs:
                   # .java 파일만 처리
                   if file_path.endswith('.java'):
                       patch = file.get('patch', '')
+                      print(f"Analyzing patch for file: {file_path}")
           
                       # 패치 파일에서 변경된 라인(+로 시작하는 라인과 -로 시작하는 라인) 처리
                       removed_lines = []
@@ -81,6 +86,7 @@ jobs:
                           context = "\n".join(removed_lines + [added_line])  # 삭제된 라인과 추가된 라인을 컨텍스트로 묶기
           
                           if added_line:  # 추가된 내용이 있을 때만 GPT 분석
+                              print(f"Calling GPT API for added line: {added_line}")
                               try:
                                   gpt_response = openai.chat.completions.create(
                                       model=model_name,
@@ -94,6 +100,7 @@ jobs:
                                   continue
           
                               review_comment = gpt_response.choices[0].message.content
+                              print(f"GPT response received for file: {file_path}")
           
                               # 변경된 파일과 라인에 리뷰 코멘트를 추가
                               position = file['changes']  # 변경된 라인 위치 정보
@@ -104,6 +111,7 @@ jobs:
                               }
           
                               comment_url = f"https://api.github.com/repos/comeevery-git/basic_java/pulls/11/comments"
+                              print(f"Posting comment to GitHub for file: {file_path}")
                               requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
           else:
               print(f"Unexpected status code: {response.status_code}")
