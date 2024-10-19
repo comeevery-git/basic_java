@@ -88,12 +88,14 @@ jobs:
                         if added_line:  # 추가된 내용이 있을 때만 GPT 분석
                             print(f"Calling GPT API for added line: {added_line}")
                             try:
+                                # OpenAI API 호출에 타임아웃 설정 (15초로 설정)
                                 gpt_response = openai.chat.completions.create(
                                     model=model_name,
                                     messages=[
                                         {"role": "system", "content": system_prompt},
                                         {"role": "user", "content": f"Here is the code diff for context:\n{context}"}
-                                    ]
+                                    ],
+                                    timeout=15  # 타임아웃 설정
                                 )
                             except Exception as e:
                                 print(f"Error in GPT request: {e}")
