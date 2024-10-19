@@ -108,24 +108,30 @@ jobs:
                     review_comment = gpt_response.choices[0].message.content
                     print(f"GPT response received for file: {file_path}")
                     print(f"Review comment: {review_comment}")
-    
+        
                     # 변경된 파일과 라인에 리뷰 코멘트를 추가
-                    position = file['changes']  # 변경된 라인 위치 정보
+                    commit_id = file['sha']  # 현재 파일의 커밋 ID
+                    line_number = file['line']  # 파일에서 변경된 라인의 실제 번호
                     comment_body = {
                         "body": review_comment,
                         "path": file_path,
-                        "position": position
+                        "line": line_number,
+                        "side": "RIGHT",  # 변경된 코드에 대한 코멘트를 추가할 경우 'RIGHT'
+                        "commit_id": commit_id
                     }
-        
-                    print(f"Commenting on file: {file_path}, position: {position}")
-
+                    
+                    # 코멘트를 추가하기 전 파일 경로와 위치를 로그로 출력
+                    print(f"Commenting on file: {file_path}, line: {line_number}")
+                    
                     comment_url = f"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments"
-                    print(f"Posting comment to GitHub for file: {file_path}")
                     response = requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
+                    
+                    # 응답 상태 확인
                     if response.status_code == 201:
                         print(f"Comment posted successfully for file: {file_path}")
                     else:
                         print(f"Failed to post comment. Status code: {response.status_code}, Response: {response.text}")
+
 
     
                 # 각 파일을 처리한 후 파일 이름을 기록
