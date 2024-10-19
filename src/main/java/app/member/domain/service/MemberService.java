@@ -55,32 +55,35 @@ public class MemberService {
     @Transactional
     public UpdateMemberVo updateMember(UpdateMemberDto dto) {
         try {
-            Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new CustomException(
-				ResponseCode.NOT_EXIST));
-            log.info("### 회원 조회 결과: {}", member);
+            Member member = memberRepository.findById(dto.getMemberId())
+                    .orElseThrow(() -> new CustomException(ResponseCode.NOT_EXIST));
 
-            if (!dto.getName().isBlank()) {
-                member.setName(dto.getName());
-            }
-            if (!dto.getEmail().isBlank()) {
-                member.setEmail(dto.getEmail());
-            }
-            if (!dto.getRole().equals(member.getRole())) {
-                member.setRole(dto.getRole());
-            }
-            member.setUpdatedMemberId(dto.getMemberId());
+            log.debug("### 회원 조회 결과: {}", member);
+
+            updateMemberFields(member, dto);
 
             Member result = memberRepository.save(member);
-            log.info("### 회원 수정 결과: {}", result);
+            log.debug("### 회원 수정 결과: {}", result);
 
             return UpdateMemberVo.toVo(result);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException(ResponseCode.CONFLICT_DATA);
         } catch (CustomException e) {
             throw new CustomException(e.getResponseCode());
-        } catch (Exception e) {
-            throw e;
         }
+    }
+
+    private void updateMemberFields(Member member, UpdateMemberDto dto) {
+        if (!dto.getName().isBlank()) {
+            member.setName(dto.getName());
+        }
+        if (!dto.getEmail().isBlank()) {
+            member.setEmail(dto.getEmail());
+        }
+        if (!dto.getRole().equals(member.getRole())) {
+            member.setRole(dto.getRole());
+        }
+        member.setUpdatedMemberId(dto.getMemberId());
     }
 
 
