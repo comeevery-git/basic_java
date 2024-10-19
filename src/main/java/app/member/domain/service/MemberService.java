@@ -24,23 +24,19 @@ public class MemberService {
 
     @Transactional
     public CreateMemberVo createMember(CreateMemberDto dto) {
-        try {
-            Member member = Member.builder()
-                            .name(dto.getName())
-                            .email(dto.getEmail())
-                            .role(dto.getRole())
-                            .build();
-            Member result = memberRepository.save(member);
-            log.info("### 회원 생성 결과: {}", result);
+        validateNewMember(dto);
 
-            return CreateMemberVo.toVo(result);
-        } catch (DataIntegrityViolationException e) {
-            throw new CustomException(ResponseCode.CONFLICT_DATA);
-        } catch (CustomException e) {
-            throw new CustomException(e.getResponseCode());
-        } catch (Exception e) {
-            throw e;
-        }
+        Member member = Member.builder()
+                        .name(dto.getName())
+                        .email(dto.getEmail())
+                        .role(dto.getRole())
+                        .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        log.info("New member created with ID: {}", savedMember.getId());
+
+        return CreateMemberVo.toVo(savedMember);
     }
 
     @Transactional(readOnly = true)
