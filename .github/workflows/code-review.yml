@@ -112,26 +112,27 @@ jobs:
 
                     # 변경된 파일과 라인에 리뷰 코멘트를 추가
                     commit_id = "${{ github.event.pull_request.head.sha }}"
-                    line_number = file.get('patch').split('\n').index(next(line for line in file['patch'].split('\n') if line.startswith('+'))) + 1
-                    comment_body = {
-                        "body": review_comment,
-                        "path": file_path,
-                        "line": line_number,
-                        "side": "RIGHT",
-                        "commit_id": commit_id
-                    }
+                    position = file.get('position', None)  # 'position' 필드 사용
+                    if position is not None:
+                        comment_body = {
+                            "body": review_comment,
+                            "path": file_path,
+                            "position": position,  # 'line' 대신 'position' 사용
+                            "side": "RIGHT",
+                            "commit_id": commit_id
+                        }
 
-                    # 코멘트를 추가하기 전 파일 경로와 위치를 로그로 출력
-                    print(f"Commenting on file: {file_path}, line: {line_number}")
+                        # 코멘트를 추가하기 전 파일 경로와 위치를 로그로 출력
+                        print(f"Commenting on file: {file_path}, position: {position}")
 
-                    comment_url = f"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments"
-                    response = requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
+                        comment_url = f"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments"
+                        response = requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
 
-                    # 응답 상태 확인
-                    if response.status_code == 201:
-                        print(f"Comment posted successfully for file: {file_path}")
-                    else:
-                        print(f"Failed to post comment. Status code: {response.status_code}, Response: {response.text}")
+                        # 응답 상태 확인
+                        if response.status_code == 201:
+                            print(f"Comment posted successfully for file: {file_path}")
+                        else:
+                            print(f"Failed to post comment. Status code: {response.status_code}, Response: {response.text}")
 
                 # 각 파일을 처리한 후 파일 이름을 기록
                 processed_files.add(file_path)
