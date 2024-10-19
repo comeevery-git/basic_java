@@ -65,7 +65,8 @@ jobs:
     - name: Post review comment on PR
       run: |
         REVIEW_COMMENT=$(cat gpt_review.txt)
-        echo "Review Comment: $REVIEW_COMMENT"  # 코멘트 내용 확인
+        echo "Review Comment: $REVIEW_COMMENT"
+        REVIEW_COMMENT_ESCAPED=$(echo "${REVIEW_COMMENT}" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
         curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -d "{\"body\": \"${REVIEW_COMMENT}\"}" \
+          -d "{\"body\": ${REVIEW_COMMENT_ESCAPED}}" \
           "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
