@@ -29,44 +29,54 @@ jobs:
         git diff origin/${{ github.event.pull_request.base.ref }} ${{ github.sha }} > pr_diff.txt
       shell: bash
 
-    - name: Perform Code Review with GPT
+    - name: Perform Code Review with GPT and Comment on Changed Lines
       id: gpt_review
       run: |
         python - <<EOF
         import openai
+        import requests
+        import json
 
-        # OpenAI API Key 및 모델명 환경 변수로 설정
+        # OpenAI API Key 설정
         openai.api_key = "${{ secrets.OPENAI_API_KEY }}"
 
         # 시스템 프롬프트 및 모델명 가져오기
         system_prompt = """${{ secrets.SYSTEM_PROMPT }}"""
         model_name = "${{ secrets.OPENAI_MODEL }}"
 
-        with open('pr_diff.txt', 'r') as file:
-            diff_content = file.read()
+        # 변경된 파일과 라인 정보를 가져오기 위한 GitHub API 호출
+        files_url = "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files"
+        headers = {"Authorization": f"token ${{ secrets.GITHUB_TOKEN }}"}
+        response = requests.get(files_url, headers=headers)
 
-        # GPT 모델 호출
-        response = openai.chat.completions.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"Here is the code diff:\n{diff_content}"}
-            ]
-        )
+        if response.status_code == 200:
+            files_changed = response.json()
 
-        # GPT 리뷰 결과 추출
-        review_feedback = response.choices[0].message.content
+            for file in files_changed:
+                file_path = file['filename']
+                for change in file['patch'].split('\n'):
+                    if change.startswith('+'):  # 변경된 라인만 처리
+                        line_content = change[1:].strip()
 
-        # 리뷰 결과를 gpt_review.txt 파일에 저장
-        with open('gpt_review.txt', 'w') as output_file:
-            output_file.write(review_feedback)
+                        # GPT 모델 호출
+                        gpt_response = openai.chat.completions.create(
+                            model=model_name,
+                            messages=[
+                                {"role": "system", "content": system_prompt},
+                                {"role": "user", "content": f"Here is the code diff for line:\n{line_content}"}
+                            ]
+                        )
+
+                        review_comment = gpt_response.choices[0].message.content
+
+                        # 변경된 파일과 라인에 리뷰 코멘트를 추가
+                        position = file['changes']  # 변경된 라인 위치 정보
+                        comment_body = {
+                            "body": review_comment,
+                            "path": file_path,
+                            "position": position
+                        }
+
+                        comment_url = f"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments"
+                        requests.post(comment_url, headers=headers, data=json.dumps(comment_body))
         EOF
-
-    - name: Post review comment on PR
-      run: |
-        REVIEW_COMMENT=$(cat gpt_review.txt)
-        echo "Review Comment: $REVIEW_COMMENT"
-        REVIEW_COMMENT_ESCAPED=$(echo "${REVIEW_COMMENT}" | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
-        curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -d "{\"body\": ${REVIEW_COMMENT_ESCAPED}}" \
-          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
