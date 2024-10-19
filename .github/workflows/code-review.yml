@@ -36,7 +36,6 @@ jobs:
         import openai
         import requests
         import json
-        import time
 
         # OpenAI API Key 설정
         openai.api_key = "${{ secrets.OPENAI_API_KEY }}"
