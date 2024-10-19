@@ -111,7 +111,7 @@ jobs:
 
                     # 변경된 파일과 라인에 리뷰 코멘트를 추가
                     commit_id = file.get('sha')  # 파일의 sha 값을 사용
-                    line_number = file.get('patch).split('\n').index(next(line for line in file['patch'].split('\n') if line.startswith('+'))) + 1
+                    line_number = file.get('patch').split('\n').index(next(line for line in file['patch'].split('\n') if line.startswith('+'))) + 1
                     comment_body = {
                         "body": review_comment,
                         "path": file_path,
