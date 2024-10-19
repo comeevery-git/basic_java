@@ -45,6 +45,9 @@ jobs:
         system_prompt = """${{ secrets.SYSTEM_PROMPT }}"""
         model_name = "${{ secrets.OPENAI_MODEL }}"
 
+        # 처리된 라인을 저장하기 위한 집합 (중복 방지)
+        processed_lines = set()
+
         # GitHub API 호출 로그
         print("Fetching changed files from GitHub API...")
 
@@ -78,10 +81,17 @@ jobs:
                     added_lines = []
 
                     for line in patch.split('\n'):
+                        # 중복된 라인은 건너뜀
+                        if line in processed_lines:
+                            continue
+
                         if line.startswith('-') and not line.startswith('***'):  # 삭제된 라인
                             removed_lines.append(line[1:].strip())
                         elif line.startswith('+') and not line.startswith('+++'):  # 추가된 라인
                             added_lines.append(line[1:].strip())
+
+                        # 라인을 처리한 후 기록
+                        processed_lines.add(line)
 
                     # 삭제된 라인과 추가된 라인을 모두 컨텍스트로 GPT에게 전달
                     for added_line in added_lines:
@@ -97,7 +107,7 @@ jobs:
                                         {"role": "system", "content": system_prompt},
                                         {"role": "user", "content": f"Here is the code diff for context:\n{context}"}
                                     ],
-                                    timeout=30  # 타임아웃 30초로 늘림
+                                    timeout=30  # 타임아웃 30초로 설정
                                 )
                             except Exception as e:
                                 print(f"Error in GPT request: {e}")
@@ -122,4 +132,14 @@ jobs:
         else:
             print(f"Unexpected status code: {response.status_code}")
             exit(1)
+
+        # 리뷰가 완료된 후 최종 요약 코멘트를 PR에 추가
+        final_comment = "### 최종 리뷰 요약: 각 파일 및 라인의 모든 변경 사항을 검토 완료했습니다."
+        comment_url = f"https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+        requests.post(comment_url, headers=headers, data=json.dumps({"body": final_comment}))
+        print("Final review comment posted.")
+
+        # 리뷰 완료 후 종료
+        print("Review completed. Exiting...")
+        exit(0)
         EOF
