@@ -21,6 +21,7 @@ spring:
 logging:
   file:
     name: basic_java.log
-logging.level:
-  org.hibernate.SQL:  # SQL query
-  org.hibernate.type : trace # SQL query parameters
+  level:
+    root: ERROR
+    org.hibernate.SQL: DEBUG # SQL 쿼리 로그
+    org.hibernate.type: TRACE # SQL 쿼리 파라미터 로그

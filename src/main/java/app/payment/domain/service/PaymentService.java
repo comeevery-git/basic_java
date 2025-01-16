@@ -5,15 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import app.auth.domain.service.VerificationService;
+import app.common.domain.model.common.ResponseCode;
+import app.common.infrastructure.exception.CustomException;
 import app.payment.application.dto.CreatePaymentDto;
 import app.payment.application.dto.UpdatePaymentDto;
 import app.payment.application.vo.CreatePaymentVo;
 import app.payment.application.vo.UpdatePaymentVo;
-import app.common.domain.model.common.ResponseCode;
 import app.payment.domain.model.entity.Payment;
 import app.payment.domain.model.entity.Status;
 import app.payment.domain.repository.PaymentRepository;
-import app.common.infrastructure.exception.CustomException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,7 +53,7 @@ public class PaymentService {
     public UpdatePaymentVo updatePayment(UpdatePaymentDto dto) {
         try {
             Payment payment = paymentRepository.findById(dto.getPaymentId()).orElseThrow(() -> new CustomException(
-				ResponseCode.NOT_EXIST));
+				ResponseCode.RESOURCE_NOT_FOUND));
             log.info("### 결제수단 조회 결과: {}", payment);
 
             // 결제수단 수정 시 이력 저장

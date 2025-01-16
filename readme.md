@@ -1,10 +1,11 @@
-----
+# Java/Spring Boot Project
 
 
-> 
-> Java 의 다양한 기능을 활용해보며 이것저것 개발 및 테스트 해보는 프로젝트입니다.
-> 
+## 개요
 
+Java 의 다양한 기능을 활용해보며 이것저것 개발 및 테스트 해보는 프로젝트입니다.
+
+### 기술 스택
 - Java 21
 - Gradle 8.5
   - `./gradlew wrapper --gradle-version=8.5`
@@ -18,13 +19,28 @@
 [//]: # (gradle restdocs-api-spec 0.18.4 사용하려고 했으나, `./gradlew openapi3` -> JVM 21 지원안함)
 
 
-> 
-> 소프트웨어 개발 방법론 관련 서적 내용 등 정리 하이퍼링크
->
+## 실행
 
-[DDD](./docs/ddd/readme.md)
+### 명령어 (Makefile)
 
-[TDD](./docs/tdd/readme.md)
+```bash
+make install
+```
+
+```bash
+make run
+```
+
+### Swagger
+`http://localhost:8080/swagger-ui/index.html`
+
+
+
+## 기타
+
+### 소프트웨어 개발 방법론 관련 서적 내용 등 정리 하이퍼링크
+- [DDD](./docs/ddd/readme.md)
+- [TDD](./docs/tdd/readme.md)
 
 [//]: # (BDD:`Behavior Driven Development&#40;행위 주도 개발&#41;`)
 [//]: # ( - 사용자의 행위까지 생각하고 테스트하며 개발한다..)

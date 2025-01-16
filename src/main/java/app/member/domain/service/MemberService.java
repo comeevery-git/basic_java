@@ -4,15 +4,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import app.common.domain.model.common.ResponseCode;
+import app.common.infrastructure.exception.CustomException;
 import app.member.application.dto.CreateMemberDto;
 import app.member.application.dto.UpdateMemberDto;
 import app.member.application.vo.CreateMemberVo;
 import app.member.application.vo.MemberVo;
 import app.member.application.vo.UpdateMemberVo;
-import app.common.domain.model.common.ResponseCode;
 import app.member.domain.model.entity.Member;
 import app.member.domain.repository.MemberRepository;
-import app.common.infrastructure.exception.CustomException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +34,7 @@ public class MemberService {
 
         Member savedMember = memberRepository.save(member);
 
-        log.info("New member created with ID: {}", savedMember.getId());
+        log.info("New member created with ID: {}", savedMember.getMemberId());
 
         return CreateMemberVo.toVo(savedMember);
     }
@@ -42,7 +42,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberVo getMember(Long memberId) {
         try {
-            Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ResponseCode.NOT_EXIST));
+            Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ResponseCode.RESOURCE_NOT_FOUND));
             log.info("### 회원 조회 결과: {}", member);
             return MemberVo.toVo(member);
         } catch (CustomException e) {
@@ -56,7 +56,7 @@ public class MemberService {
     public UpdateMemberVo updateMember(UpdateMemberDto dto) {
         try {
             Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new CustomException(
-				ResponseCode.NOT_EXIST));
+				ResponseCode.RESOURCE_NOT_FOUND));
             log.info("### 회원 조회 결과: {}", member);
 
             if (!dto.getName().isBlank()) {
@@ -83,5 +83,9 @@ public class MemberService {
         }
     }
 
-
+    private void validateNewMember(CreateMemberDto dto) {
+        if (dto.getName().isBlank() || dto.getEmail().isBlank() || dto.getRole() == null) {
+            throw new CustomException(ResponseCode.INVALID_ARGUMENT);
+        }
+    }
 }

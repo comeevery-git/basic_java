@@ -1,9 +1,5 @@
 package app.presentation;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,13 +9,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import app.payment.application.dto.CreatePaymentDto;
-import app.payment.application.dto.UpdatePaymentDto;
 import app.common.domain.model.common.CommonCode;
 import app.common.domain.model.common.ResponseCode;
+import app.payment.application.dto.CreatePaymentDto;
+import app.payment.application.dto.UpdatePaymentDto;
 import app.payment.domain.model.entity.Status;
 import app.payment.domain.service.PaymentService;
 import app.payment.presentation.PaymentController;
