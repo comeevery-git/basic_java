@@ -1,0 +1,199 @@
+name: ✨ 개선 이슈
+description: 기능 개선, 성능 최적화, 보안 강화 등 개선 관련 이슈
+labels: [enhancement, backend]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 개선 이슈
+        기존 기능을 개선하거나 성능을 최적화하기 위한 이슈입니다.
+        
+  - type: dropdown
+    id: improvement-type
+    attributes:
+      label: 개선 유형
+      description: 이 개선의 주요 유형을 선택해주세요
+      options:
+        - 성능 최적화
+        - 확장성 개선
+        - 보안 강화
+        - UX/사용성 개선
+        - 오류 처리 개선
+        - 로깅/모니터링 개선
+        - 코드 품질 개선
+        - 인프라 개선
+    validations:
+      required: true
+      
+  - type: textarea
+    id: current-state
+    attributes:
+      label: 현재 상태
+      description: 개선이 필요한 기능/영역의 현재 상태를 설명해주세요
+      placeholder: |
+        - 현재 구현 방식
+        - 현재의 문제점/한계
+        - 측정된 성능 지표 (있다면)
+    validations:
+      required: true
+      
+  - type: textarea
+    id: improvement-details
+    attributes:
+      label: 개선 내용
+      description: 어떤 개선을 하고자 하는지 상세히 설명해주세요
+      placeholder: |
+        - 구체적인 개선 방안
+        - 예상되는 변경사항
+        - 적용할 기술/패턴
+        - 참고한 벤치마크/사례
+    validations:
+      required: true
+      
+  - type: textarea
+    id: expected-benefits
+    attributes:
+      label: 기대 효과
+      description: 이 개선으로 얻을 수 있는 구체적인 이점을 설명해주세요
+      placeholder: |
+        - 성능 지표 개선 예상치 (응답시간 XX% 감소, 처리량 XX% 증가)
+        - 보안 취약점 해결
+        - 리소스 사용량 감소
+        - 사용자 경험 개선
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: 구현 복잡도
+      description: 이 개선의 구현 복잡도를 선택해주세요
+      options:
+        - 낮음 (간단한 코드 변경)
+        - 중간 (여러 파일 변경 필요)
+        - 높음 (아키텍처 변경 필요)
+        - 매우 높음 (시스템 전체 영향)
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: impact
+    attributes:
+      label: 서비스 영향도
+      description: 개선 작업 중 서비스 영향도는 어떻게 되나요?
+      options:
+        - 없음 (무중단 적용 가능)
+        - 낮음 (일부 기능 일시적 영향)
+        - 중간 (일정 시간 서비스 중단 필요)
+        - 높음 (계획된 점검 시간 필요)
+    validations:
+      required: true
+      
+  - type: textarea
+    id: measurement
+    attributes:
+      label: 측정 및 검증 방법
+      description: 개선 효과를 어떻게 측정하고 검증할 계획인지 설명해주세요
+      placeholder: |
+        - 측정할 지표 (응답시간, 메모리 사용량, CPU 사용률 등)
+        - 테스트 시나리오
+        - A/B 테스트 계획
+        - 모니터링 방법
+    validations:
+      required: true
+      
+  - type: textarea
+    id: implementation-plan
+    attributes:
+      label: 구현 계획
+      description: 구현 단계와 방법을 설명해주세요
+      placeholder: |
+        1. 현재 성능 베이스라인 측정
+        2. 프로파일링을 통한 병목 지점 식별
+        3. 인덱스 최적화
+        4. 쿼리 개선
+        5. 캐싱 적용
+        6. 성능 테스트 및 검증
+      render: markdown
+      
+  - type: dropdown
+    id: db-changes
+    attributes:
+      label: 데이터베이스 변경
+      description: 개선 작업에 데이터베이스 변경이 필요한가요?
+      options:
+        - 필요함 (스키마 변경)
+        - 필요함 (인덱스 변경)
+        - 필요함 (설정 변경)
+        - 필요 없음
+    validations:
+      required: true
+      
+  - type: textarea
+    id: db-changes-details
+    attributes:
+      label: 데이터베이스 변경 상세
+      description: 데이터베이스 변경이 필요하다면 상세히 설명해주세요
+      placeholder: |
+        ```sql
+        -- 인덱스 추가
+        CREATE INDEX idx_transaction_created_at ON transactions(created_at);
+        
+        -- 필드 추가
+        ALTER TABLE users ADD COLUMN last_login_at TIMESTAMP;
+        ```
+      render: sql
+      
+  - type: dropdown
+    id: affected-services
+    attributes:
+      label: 영향 받는 서비스
+      description: 이 개선이 영향을 미치는 서비스를 선택해주세요
+      options:
+        - 결제 처리
+        - 사용자 인증
+        - 계정 관리
+        - 거래 내역
+        - 대시보드/분석
+        - 알림 시스템
+        - 외부 시스템 연동
+        - 전체 시스템
+      multiple: true
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: security-impact
+    attributes:
+      label: 보안 영향
+      description: 이 개선이 보안에 영향을 미치나요?
+      options:
+        - 영향 없음
+        - 보안 강화
+        - 검토 필요 (잠재적 영향)
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 우선순위
+      description: 이 개선의 우선순위를 선택해주세요
+      options:
+        - Critical (서비스 안정성 관련)
+        - High (주요 성능/사용성 이슈)
+        - Medium (중요하지만 긴급하지 않음)
+        - Low (편의 개선/최적화)
+    validations:
+      required: true
+      
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 추가 컨텍스트
+      description: 개선에 관련된 추가 정보나 참고 자료가 있다면 작성해주세요
+      placeholder: |
+        - 관련 문서
+        - 참고한 사례
+        - 벤치마크 결과
+        - 관련 논의 내용

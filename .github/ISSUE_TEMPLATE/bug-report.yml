@@ -1,0 +1,132 @@
+name: 🐛 버그 리포트
+description: 시스템에서 발견된 버그 보고
+labels: [bug, backend]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 버그 리포트
+        상세한 정보를 제공해주시면 빠른 해결에 도움이 됩니다.
+        
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 버그 설명
+      description: 발생한 버그에 대해 상세히 설명해주세요
+    validations:
+      required: true
+      
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 재현 방법
+      description: 버그를 재현하는 단계를 설명해주세요
+      placeholder: |
+        1. API 엔드포인트 `/api/v1/payments` 호출
+        2. 요청 바디: `{"amount": -100}`
+        3. 500 에러 발생 (200 응답 예상)
+    validations:
+      required: true
+      
+  - type: textarea
+    id: api-request
+    attributes:
+      label: API 요청 예시
+      description: 버그 발생 시의 API 요청 예시를 제공해주세요
+      placeholder: |
+        ```
+        POST /api/v1/payments HTTP/1.1
+        Host: api.yourcompany.com
+        Content-Type: application/json
+        
+        {
+          "cardNumber": "4111111111111111",
+          "expiry": "12/25",
+          "amount": 1000
+        }
+        ```
+      render: shell
+      
+  - type: textarea
+    id: api-response
+    attributes:
+      label: 받은 응답
+      description: 버그 발생 시 받은 API 응답을 제공해주세요
+      placeholder: |
+        ```
+        HTTP/1.1 500 Internal Server Error
+        Content-Type: application/json
+        
+        {
+          "error": "Internal Server Error",
+          "message": "NullPointerException"
+        }
+        ```
+      render: shell
+      
+  - type: textarea
+    id: expected-response
+    attributes:
+      label: 예상 응답
+      description: 정상적으로 작동했다면 어떤 응답이 예상되었나요?
+      placeholder: |
+        ```
+        HTTP/1.1 200 OK
+        Content-Type: application/json
+        
+        {
+          "requestId": "123456",
+          "status": "success",
+          "data": { ... }
+        }
+        ```
+      render: shell
+      
+  - type: textarea
+    id: logs
+    attributes:
+      label: 관련 로그
+      description: 에러 로그나 관련 로그가 있다면 제공해주세요
+      render: shell
+      
+  - type: textarea
+    id: environment
+    attributes:
+      label: 환경 정보
+      description: 버그가 발생한 환경 정보를 작성해주세요
+      placeholder: |
+        - 서버 환경: 개발/스테이징/프로덕션
+        - 서버 버전: v1.2.3
+        - 데이터베이스 버전: MariaDB 10.5
+        - 관련 서비스: Redis, Kafka
+      render: markdown
+      
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 심각도
+      description: 이 버그의 심각도를 선택해주세요
+      options:
+        - Critical (서비스 중단)
+        - High (주요 기능 장애)
+        - Medium (부분적 기능 장애)
+        - Low (사소한 문제)
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: affected-modules
+    attributes:
+      label: 영향 받는 모듈
+      description: 이 버그가 영향을 미치는 모듈을 선택해주세요
+      options:
+        - 결제 처리
+        - 계정 관리
+        - 인증/보안
+        - 데이터베이스
+        - 성능/확장성
+        - 타 시스템 연동
+        - 기타
+      multiple: true
+    validations:
+      required: true
